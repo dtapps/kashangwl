@@ -1,8 +1,8 @@
 <h1>
-<a href="https://www.dtapp.net/">Golang</a>
+<a href="https://www.dtapp.net/">Golang KaShangWl</a>
 </h1>
 
-📦 Golang 卡商网
+📦 Golang KaShangWl
 
 [comment]: <> (go)
 [![godoc](https://pkg.go.dev/badge/go.dtapp.net/kashangwl?status.svg)](https://pkg.go.dev/go.dtapp.net/kashangwl)
