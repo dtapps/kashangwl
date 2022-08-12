@@ -1,6 +1,7 @@
 package kashangwl
 
 import (
+	"context"
 	"encoding/json"
 	"go.dtapp.net/gorequest"
 )
@@ -38,11 +39,11 @@ func newApiBuyResult(result ApiBuyResponse, body []byte, http gorequest.Response
 
 // ApiBuy 购买商品
 // http://doc.cqmeihu.cn/sales/buy.html
-func (c *Client) ApiBuy(notMustParams ...gorequest.Params) *ApiBuyResult {
+func (c *Client) ApiBuy(ctx context.Context, notMustParams ...gorequest.Params) *ApiBuyResult {
 	// 参数
 	params := gorequest.NewParamsWith(notMustParams...)
 	// 请求
-	request, err := c.request(apiUrl+"/api/buy", params)
+	request, err := c.request(ctx, apiUrl+"/api/buy", params)
 	// 定义
 	var response ApiBuyResponse
 	err = json.Unmarshal(request.ResponseBody, &response)
