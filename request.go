@@ -65,7 +65,7 @@ func (c *Client) requestCache(ctx context.Context, url string, params map[string
 	}
 
 	// 日志
-	if c.config.GormClient.Db != nil {
+	if c.config.GormClient != nil && c.config.GormClient.Db != nil {
 		go c.logClient.GormMiddleware(ctx, request, Version)
 	}
 

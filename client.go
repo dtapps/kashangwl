@@ -28,7 +28,7 @@ func NewClient(config *ConfigClient) (*Client, error) {
 
 	c.requestClient = gorequest.NewHttp()
 
-	if c.config.GormClient.Db != nil {
+	if c.config.GormClient != nil && c.config.GormClient.Db != nil {
 		c.logClient, err = golog.NewApiClient(&golog.ApiClientConfig{
 			GormClient: c.config.GormClient,
 			TableName:  logTable,
