@@ -35,7 +35,6 @@ func newApiProductRechargeParamsCacheResult(result ApiProductRechargeParamsCache
 func (c *Client) ApiProductRechargeParamsCache(ctx context.Context, productId int64) *ApiProductRechargeParamsCacheResult {
 	// 参数
 	params := gorequest.NewParams()
-	params.Set("product_id", productId)
 	// 请求
 	request, err := c.requestCache(ctx, fmt.Sprintf("%s/%d/goods_info_params/%d", apiUrlCache, c.GetCustomerId(), productId), params, http.MethodGet)
 	// 定义
