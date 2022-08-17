@@ -13,7 +13,7 @@ type ApiProductCacheResponse struct {
 	Message string `json:"message"`
 	Data    struct {
 		GoodsId            string  `json:"goods_id"`
-		ApiGoodsId         int     `json:"api_goods_id"`
+		ApiGoodsId         int64   `json:"api_goods_id"`
 		GoodsName          string  `json:"goods_name"`
 		ClassificationName string  `json:"classification_name"`
 		GoodsPrice         float64 `json:"goods_price"`

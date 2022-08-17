@@ -12,6 +12,8 @@ type ApiProductRechargeParamsCacheResponse struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 	Data    struct {
+		GoodsId      string `json:"goods_id"`
+		ApiGoodsId   int64  `json:"api_goods_id"`
 		PurchaseTips string `json:"purchase_tips"`
 	} `json:"data"`
 	Time    int    `json:"time"`
