@@ -7,7 +7,7 @@ type SetConfigConfig struct {
 
 // SetConfig 配置
 func (c *Client) SetConfig(config *SetConfigConfig) *Client {
-	c.config.CustomerId = config.CustomerId
-	c.config.CustomerKey = config.CustomerKey
+	c.config.customerId = config.CustomerId
+	c.config.customerKey = config.CustomerKey
 	return c
 }

@@ -6,39 +6,66 @@ import (
 	"go.dtapp.net/gorequest"
 )
 
-type ConfigClient struct {
-	CustomerId  int              // 商家编号
-	CustomerKey string           // 商家密钥
-	GormClient  *dorm.GormClient // 日志数据库
-	LogClient   *golog.ZapLog    // 日志驱动
-	LogDebug    bool             // 日志开关
-}
-
-// Client 卡商网服务
+// Client 实例
 type Client struct {
-	requestClient *gorequest.App   // 请求服务
-	logClient     *golog.ApiClient // 日志服务
-	config        *ConfigClient    // 配置
+	requestClient *gorequest.App // 请求服务
+	config        struct {
+		customerId  int    // 商家编号
+		customerKey string // 商家密钥
+	}
+	log struct {
+		gormClient     *dorm.GormClient  // 日志数据库
+		gorm           bool              // 日志开关
+		logGormClient  *golog.ApiClient  // 日志服务
+		mongoClient    *dorm.MongoClient // 日志数据库
+		mongo          bool              // 日志开关
+		logMongoClient *golog.ApiClient  // 日志服务
+	}
 }
 
-func NewClient(config *ConfigClient) (*Client, error) {
+// client *dorm.GormClient
+type gormClientFun func() *dorm.GormClient
+
+// client *dorm.MongoClient
+// databaseName string
+type mongoClientFun func() (*dorm.MongoClient, string)
+
+// NewClient 创建实例化
+// customerId 商家编号
+// customerKey 商家密钥
+func NewClient(customerId int, customerKey string, gormClientFun gormClientFun, mongoClientFun mongoClientFun, debug bool) (*Client, error) {
 
 	var err error
-	c := &Client{config: config}
+	c := &Client{}
+
+	c.config.customerId = customerId
+	c.config.customerKey = customerKey
 
 	c.requestClient = gorequest.NewHttp()
 
-	if c.config.GormClient != nil && c.config.GormClient.Db != nil {
-		c.logClient, err = golog.NewApiClient(&golog.ApiClientConfig{
-			GormClient: c.config.GormClient,
-			TableName:  logTable,
-			LogClient:  c.config.LogClient,
-			LogDebug:   c.config.LogDebug,
-		})
+	gormClient := gormClientFun()
+	if gormClient.Db != nil {
+		c.log.logGormClient, err = golog.NewApiGormClient(func() (*dorm.GormClient, string) {
+			return gormClient, logTable
+		}, debug)
 		if err != nil {
 			return nil, err
 		}
+		c.log.gorm = true
 	}
+	c.log.gormClient = gormClient
+
+	mongoClient, databaseName := mongoClientFun()
+	if mongoClient.Db != nil {
+		c.log.logMongoClient, err = golog.NewApiMongoClient(func() (*dorm.MongoClient, string, string) {
+			return mongoClient, databaseName, logTable
+		}, debug)
+		if err != nil {
+			return nil, err
+		}
+		c.log.mongo = true
+	}
+	c.log.mongoClient = mongoClient
 
 	return c, nil
 }

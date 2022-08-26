@@ -1,9 +1,9 @@
 package kashangwl
 
 func (c *Client) GetCustomerId() int {
-	return c.config.CustomerId
+	return c.config.customerId
 }
 
 func (c *Client) GetCustomerKey() string {
-	return c.config.CustomerKey
+	return c.config.customerKey
 }
