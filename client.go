@@ -20,11 +20,13 @@ type ClientConfig struct {
 	GormClientFun  gormClientFun  // 日志配置
 	MongoClientFun mongoClientFun // 日志配置
 	Debug          bool           // 日志开关
+	ZapLog         *golog.ZapLog  // 日志服务
 }
 
 // Client 实例
 type Client struct {
 	requestClient *gorequest.App // 请求服务
+	zapLog        *golog.ZapLog  // 日志服务
 	config        struct {
 		customerId  int    // 商家编号
 		customerKey string // 商家密钥
@@ -45,6 +47,8 @@ func NewClient(config *ClientConfig) (*Client, error) {
 	var err error
 	c := &Client{}
 
+	c.zapLog = config.ZapLog
+
 	c.config.customerId = config.CustomerId
 	c.config.customerKey = config.CustomerKey
 
@@ -56,7 +60,8 @@ func NewClient(config *ClientConfig) (*Client, error) {
 			GormClientFun: func() (*dorm.GormClient, string) {
 				return gormClient, logTable
 			},
-			Debug: config.Debug,
+			Debug:  config.Debug,
+			ZapLog: c.zapLog,
 		})
 		if err != nil {
 			return nil, err
@@ -71,7 +76,8 @@ func NewClient(config *ClientConfig) (*Client, error) {
 			MongoClientFun: func() (*dorm.MongoClient, string, string) {
 				return mongoClient, databaseName, logTable
 			},
-			Debug: config.Debug,
+			Debug:  config.Debug,
+			ZapLog: c.zapLog,
 		})
 		if err != nil {
 			return nil, err
