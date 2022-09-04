@@ -8,6 +8,12 @@ import (
 	"net/http"
 )
 
+const (
+	CacheGoodsStatusNormal    = "normal"     // 正常
+	CacheGoodsStatusProhibit  = "prohibit"   // 异常
+	CacheGoodsStatusNoneStock = "none_stock" // 无库存
+)
+
 type ApiProductCacheResponse struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
@@ -17,6 +23,8 @@ type ApiProductCacheResponse struct {
 		GoodsName          string  `json:"goods_name"`
 		ClassificationName string  `json:"classification_name"`
 		GoodsPrice         float64 `json:"goods_price"`
+		GoodsStatus        string  `json:"goods_status"`
+		GoodsStatusDesc    string  `json:"goods_status_desc"`
 		PurchaseTips       string  `json:"purchase_tips"`
 	} `json:"data"`
 	Time    int    `json:"time"`
