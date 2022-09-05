@@ -61,6 +61,9 @@ func (c *Client) requestCache(ctx context.Context, url string, params map[string
 	// 设置FORM格式
 	client.SetContentTypeJson()
 
+	// 设置用户代理
+	client.SetUserAgent(gorequest.GetRandomUserAgentSystem())
+
 	// 设置参数
 	client.SetParams(params)
 
