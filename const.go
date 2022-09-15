@@ -17,4 +17,4 @@ const (
 	logTable = "kashangwl"
 )
 
-const Version = "1.0.19"
+const Version = "1.0.20"
