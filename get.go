@@ -10,6 +10,6 @@ func (c *Client) GetCustomerKey() string {
 	return c.config.customerKey
 }
 
-func (c *Client) GetLogGorm() *golog.ApiClient {
+func (c *Client) GetLog() *golog.ApiClient {
 	return c.log.client
 }
