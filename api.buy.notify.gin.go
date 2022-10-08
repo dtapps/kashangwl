@@ -7,7 +7,7 @@ import (
 
 // ResponseApiBuyNotifyGin 购买商品 - 回调通知 - 请求参数
 type ResponseApiBuyNotifyGin struct {
-	OrderId      int64  `form:"order_id" json:"order_id" xml:"order_id" uri:"order_id" binding:"required"`                          // 订单编号
+	OrderId      string `form:"order_id" json:"order_id" xml:"order_id" uri:"order_id" binding:"required"`                          // 订单编号
 	OuterOrderId string `form:"outer_order_id" json:"outer_order_id" xml:"outer_order_id" uri:"outer_order_id" binding:"omitempty"` // 商户订单号
 	ProductId    int    `form:"product_id" json:"product_id" xml:"product_id" uri:"product_id" binding:"omitempty"`                 // 商品编号
 	Quantity     int    `form:"quantity" json:"quantity" xml:"quantity" uri:"quantity" binding:"required"`                          // 购买数量
