@@ -7,7 +7,7 @@ import (
 
 // ClientConfig 实例配置
 type ClientConfig struct {
-	CustomerId  int    // 商家编号
+	CustomerId  int64  // 商家编号
 	CustomerKey string // 商家密钥
 }
 
@@ -15,7 +15,7 @@ type ClientConfig struct {
 type Client struct {
 	requestClient *gorequest.App // 请求服务
 	config        struct {
-		customerId  int    // 商家编号
+		customerId  int64  // 商家编号
 		customerKey string // 商家密钥
 	}
 	log struct {

@@ -1,7 +1,7 @@
 package kashangwl
 
 type SetConfigConfig struct {
-	CustomerId  int    // 商家编号
+	CustomerId  int64  // 商家编号
 	CustomerKey string // 商家密钥
 }
 

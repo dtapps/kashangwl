@@ -2,7 +2,7 @@ package kashangwl
 
 import "go.dtapp.net/golog"
 
-func (c *Client) GetCustomerId() int {
+func (c *Client) GetCustomerId() int64 {
 	return c.config.customerId
 }
 
