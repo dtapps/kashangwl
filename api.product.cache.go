@@ -12,14 +12,11 @@ type ApiProductCacheResponse struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 	Data    struct {
-		GoodsId            string  `json:"goods_id"`
-		ApiGoodsId         int64   `json:"api_goods_id"`
-		GoodsName          string  `json:"goods_name"`
-		ClassificationName string  `json:"classification_name"`
-		GoodsPrice         float64 `json:"goods_price"`
-		GoodsStatus        string  `json:"goods_status"`
-		GoodsStatusDesc    string  `json:"goods_status_desc"`
-		PurchaseTips       string  `json:"purchase_tips"`
+		GoodsId      uint    `json:"goods_id"`
+		ApiGoodsId   int64   `json:"api_goods_id"`
+		GoodsName    string  `json:"goods_name"`
+		GoodsPrice   float64 `json:"goods_price"`
+		PurchaseTips string  `json:"purchase_tips"`
 	} `json:"data"`
 	Time    int    `json:"time"`
 	TraceId string `json:"trace_id"`
