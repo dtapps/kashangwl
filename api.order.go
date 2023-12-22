@@ -2,7 +2,7 @@ package kashangwl
 
 import (
 	"context"
-	"encoding/json"
+	"go.dtapp.net/gojson"
 	"go.dtapp.net/gorequest"
 )
 
@@ -43,25 +43,26 @@ type ApiOrderResult struct {
 	Result ApiOrderResponse   // 结果
 	Body   []byte             // 内容
 	Http   gorequest.Response // 请求
-	Err    error              // 错误
 }
 
-func newApiOrderResult(result ApiOrderResponse, body []byte, http gorequest.Response, err error) *ApiOrderResult {
-	return &ApiOrderResult{Result: result, Body: body, Http: http, Err: err}
+func newApiOrderResult(result ApiOrderResponse, body []byte, http gorequest.Response) *ApiOrderResult {
+	return &ApiOrderResult{Result: result, Body: body, Http: http}
 }
 
-// ApiOrder 获取单个订单信息。
-// 仅能获取自己购买的订单。
+// ApiOrder 获取单个订单信息。仅能获取自己购买的订单。
+// order_id = 订单号
 // http://doc.cqmeihu.cn/sales/order-info.html
-func (c *Client) ApiOrder(ctx context.Context, orderId string) *ApiOrderResult {
+func (c *Client) ApiOrder(ctx context.Context, orderID int64, notMustParams ...gorequest.Params) (*ApiOrderResult, error) {
 	// 参数
-	param := gorequest.NewParams()
-	param.Set("order_id", orderId)
-	params := gorequest.NewParamsWith(param)
+	params := gorequest.NewParamsWith(notMustParams...)
+	params.Set("order_id", orderID) // 订单号
 	// 请求
 	request, err := c.request(ctx, apiUrl+"/api/order", params)
+	if err != nil {
+		return newApiOrderResult(ApiOrderResponse{}, request.ResponseBody, request), err
+	}
 	// 定义
 	var response ApiOrderResponse
-	err = json.Unmarshal(request.ResponseBody, &response)
-	return newApiOrderResult(response, request.ResponseBody, request, err)
+	err = gojson.Unmarshal(request.ResponseBody, &response)
+	return newApiOrderResult(response, request.ResponseBody, request), err
 }

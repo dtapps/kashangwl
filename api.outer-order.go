@@ -2,7 +2,7 @@ package kashangwl
 
 import (
 	"context"
-	"encoding/json"
+	"go.dtapp.net/gojson"
 	"go.dtapp.net/gorequest"
 )
 
@@ -43,25 +43,42 @@ type ApiOuterOrderResult struct {
 	Result ApiOuterOrderResponse // 结果
 	Body   []byte                // 内容
 	Http   gorequest.Response    // 请求
-	Err    error                 // 错误
 }
 
-func newApiOuterOrderResult(result ApiOuterOrderResponse, body []byte, http gorequest.Response, err error) *ApiOuterOrderResult {
-	return &ApiOuterOrderResult{Result: result, Body: body, Http: http, Err: err}
+func newApiOuterOrderResult(result ApiOuterOrderResponse, body []byte, http gorequest.Response) *ApiOuterOrderResult {
+	return &ApiOuterOrderResult{Result: result, Body: body, Http: http}
 }
 
-// ApiOuterOrder 使用外部订单号获取单个订单信息
-// 仅能获取自己购买的订单
+// ApiOuterOrder 使用外部订单号获取单个订单信息 仅能获取自己购买的订单
+// outer_order_id = 外部订单号
 // http://doc.cqmeihu.cn/sales/outer-order-info.html
-func (c *Client) ApiOuterOrder(ctx context.Context, orderId string) *ApiOuterOrderResult {
+func (c *Client) ApiOuterOrder(ctx context.Context, outerOrderID string, notMustParams ...gorequest.Params) (*ApiOuterOrderResult, error) {
 	// 参数
-	param := gorequest.NewParams()
-	param.Set("outer_order_id", orderId)
-	params := gorequest.NewParamsWith(param)
+	params := gorequest.NewParamsWith(notMustParams...)
+	params.Set("outer_order_id", outerOrderID) // 外部订单号
 	// 请求
 	request, err := c.request(ctx, apiUrl+"/api/outer-order", params)
+	if err != nil {
+		return newApiOuterOrderResult(ApiOuterOrderResponse{}, request.ResponseBody, request), err
+	}
 	// 定义
 	var response ApiOuterOrderResponse
-	err = json.Unmarshal(request.ResponseBody, &response)
-	return newApiOuterOrderResult(response, request.ResponseBody, request, err)
+	err = gojson.Unmarshal(request.ResponseBody, &response)
+	return newApiOuterOrderResult(response, request.ResponseBody, request), err
+}
+
+func (resp ApiOuterOrderResponse) GetStateDesc(state int) string {
+	switch state {
+	case 100:
+		return "等待发货"
+	case 101:
+		return "正在充值"
+	case 200:
+		return "交易成功"
+	case 500:
+		return "交易失败"
+	case 501:
+		return "未知状态"
+	}
+	return ""
 }

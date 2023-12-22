@@ -4,20 +4,19 @@ import (
 	"bytes"
 	"crypto/md5"
 	"encoding/hex"
-	"encoding/json"
 	"go.dtapp.net/gorequest"
+	"go.dtapp.net/gostring"
 	"io"
 	"net/url"
 	"sort"
-	"strconv"
 	"strings"
 )
 
 // md5(key + 参数1名称 + 参数1值 + 参数2名称 + 参数2值...) 加密源串应为{key}customer_id1192442order_id827669582783timestamp1626845767
-func (c *Client) getSign(customerKey string, params map[string]interface{}) string {
+func (c *Client) getSign(customerKey string, param gorequest.Params) string {
 	// 参数按照参数名的字典升序排列
 	var keys []string
-	for k := range params {
+	for k := range param {
 		keys = append(keys, k)
 	}
 	sort.Strings(keys)
@@ -25,7 +24,7 @@ func (c *Client) getSign(customerKey string, params map[string]interface{}) stri
 	query := bytes.NewBufferString(customerKey)
 	for _, k := range keys {
 		query.WriteString(k)
-		query.WriteString(gorequest.GetParamsString(params[k]))
+		query.WriteString(gorequest.GetParamsString(param.Get(k)))
 	}
 	// MD5加密
 	h := md5.New()
@@ -34,26 +33,12 @@ func (c *Client) getSign(customerKey string, params map[string]interface{}) stri
 }
 
 // 获取请求数据
-func (c *Client) getRequestData(params map[string]interface{}) string {
+func (c *Client) getRequestData(param gorequest.Params) string {
 	// 公共参数
 	args := url.Values{}
 	// 请求参数
-	for key, val := range params {
-		args.Set(key, c.getString(val))
+	for key, val := range param {
+		args.Set(key, gostring.GetString(val))
 	}
 	return args.Encode()
-}
-
-func (c *Client) getString(i interface{}) string {
-	switch v := i.(type) {
-	case string:
-		return v
-	case int:
-		return strconv.Itoa(v)
-	case bool:
-		return strconv.FormatBool(v)
-	default:
-		marshal, _ := json.Marshal(v)
-		return string(marshal)
-	}
 }

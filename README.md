@@ -13,5 +13,5 @@
 #### 安装
 
 ```go
-go get -v -u go.dtapp.net/kashangwl
+go get -v -u go.dtapp.net/kashangwl@v1.0.32
 ```

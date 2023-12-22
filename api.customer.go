@@ -2,7 +2,7 @@ package kashangwl
 
 import (
 	"context"
-	"encoding/json"
+	"go.dtapp.net/gojson"
 	"go.dtapp.net/gorequest"
 )
 
@@ -20,20 +20,26 @@ type ApiCustomerResult struct {
 	Result ApiCustomerResponse // 结果
 	Body   []byte              // 内容
 	Http   gorequest.Response  // 请求
-	Err    error               // 错误
 }
 
-func newApiCustomerResult(result ApiCustomerResponse, body []byte, http gorequest.Response, err error) *ApiCustomerResult {
-	return &ApiCustomerResult{Result: result, Body: body, Http: http, Err: err}
+func newApiCustomerResult(result ApiCustomerResponse, body []byte, http gorequest.Response) *ApiCustomerResult {
+	return &ApiCustomerResult{Result: result, Body: body, Http: http}
 }
 
 // ApiCustomer 获取商家信息
+// customer_id = 商家编号
 // http://doc.cqmeihu.cn/sales/merchant-info.html
-func (c *Client) ApiCustomer(ctx context.Context) *ApiCustomerResult {
+func (c *Client) ApiCustomer(ctx context.Context, customerID int64, notMustParams ...gorequest.Params) (*ApiCustomerResult, error) {
+	// 参数
+	params := gorequest.NewParamsWith(notMustParams...)
+	params.Set("customer_id", customerID) // 商家编号
 	// 请求
-	request, err := c.request(ctx, apiUrl+"/api/customer", map[string]interface{}{})
+	request, err := c.request(ctx, apiUrl+"/api/customer", params)
+	if err != nil {
+		return newApiCustomerResult(ApiCustomerResponse{}, request.ResponseBody, request), err
+	}
 	// 定义
 	var response ApiCustomerResponse
-	err = json.Unmarshal(request.ResponseBody, &response)
-	return newApiCustomerResult(response, request.ResponseBody, request, err)
+	err = gojson.Unmarshal(request.ResponseBody, &response)
+	return newApiCustomerResult(response, request.ResponseBody, request), err
 }

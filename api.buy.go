@@ -2,7 +2,7 @@ package kashangwl
 
 import (
 	"context"
-	"encoding/json"
+	"go.dtapp.net/gojson"
 	"go.dtapp.net/gorequest"
 )
 
@@ -30,22 +30,34 @@ type ApiBuyResult struct {
 	Result ApiBuyResponse     // 结果
 	Body   []byte             // 内容
 	Http   gorequest.Response // 请求
-	Err    error              // 错误
 }
 
-func newApiBuyResult(result ApiBuyResponse, body []byte, http gorequest.Response, err error) *ApiBuyResult {
-	return &ApiBuyResult{Result: result, Body: body, Http: http, Err: err}
+func newApiBuyResult(result ApiBuyResponse, body []byte, http gorequest.Response) *ApiBuyResult {
+	return &ApiBuyResult{Result: result, Body: body, Http: http}
 }
 
 // ApiBuy 购买商品
+// product_id = 商品编号
+// recharge_account = 充值账号
+// recharge_template_input_items = 模板充值参数
+// quantity = 购买数量
+// notify_url = 异步通知地址
+// outer_order_id = 外部订单号
+// safe_cost = 安全进价
+// client_ip = 购买的用户真实IP
 // http://doc.cqmeihu.cn/sales/buy.html
-func (c *Client) ApiBuy(ctx context.Context, notMustParams ...gorequest.Params) *ApiBuyResult {
+func (c *Client) ApiBuy(ctx context.Context, productID int64, quantity int64, notMustParams ...gorequest.Params) (*ApiBuyResult, error) {
 	// 参数
 	params := gorequest.NewParamsWith(notMustParams...)
+	params.Set("product_id", productID) // 商品编号
+	params.Set("quantity", quantity)    // 购买数量
 	// 请求
 	request, err := c.request(ctx, apiUrl+"/api/buy", params)
+	if err != nil {
+		return newApiBuyResult(ApiBuyResponse{}, request.ResponseBody, request), err
+	}
 	// 定义
 	var response ApiBuyResponse
-	err = json.Unmarshal(request.ResponseBody, &response)
-	return newApiBuyResult(response, request.ResponseBody, request, err)
+	err = gojson.Unmarshal(request.ResponseBody, &response)
+	return newApiBuyResult(response, request.ResponseBody, request), err
 }

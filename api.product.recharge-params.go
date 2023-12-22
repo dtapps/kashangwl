@@ -2,7 +2,7 @@ package kashangwl
 
 import (
 	"context"
-	"encoding/json"
+	"go.dtapp.net/gojson"
 	"go.dtapp.net/gorequest"
 )
 
@@ -23,24 +23,26 @@ type ApiProductRechargeParamsResult struct {
 	Result ApiProductRechargeParamsResponse // 结果
 	Body   []byte                           // 内容
 	Http   gorequest.Response               // 请求
-	Err    error                            // 错误
 }
 
-func newApiProductRechargeParamsResult(result ApiProductRechargeParamsResponse, body []byte, http gorequest.Response, err error) *ApiProductRechargeParamsResult {
-	return &ApiProductRechargeParamsResult{Result: result, Body: body, Http: http, Err: err}
+func newApiProductRechargeParamsResult(result ApiProductRechargeParamsResponse, body []byte, http gorequest.Response) *ApiProductRechargeParamsResult {
+	return &ApiProductRechargeParamsResult{Result: result, Body: body, Http: http}
 }
 
-// ApiProductRechargeParams 接口说明
-// 获取商品的充值参数（仅支持充值类商品）
-// http://doc.cqmeihu.cn/sales/ProductParams.html
-func (c *Client) ApiProductRechargeParams(ctx context.Context, productId int64) *ApiProductRechargeParamsResult {
+// ApiProductRechargeParams 获取商品的充值参数（仅支持充值类商品）
+// product_id = 商品编号
+// http://doc.cqmeihu.cn/sales/recharge-params.html
+func (c *Client) ApiProductRechargeParams(ctx context.Context, productID int64, notMustParams ...gorequest.Params) (*ApiProductRechargeParamsResult, error) {
 	// 参数
-	params := gorequest.NewParams()
-	params.Set("product_id", productId)
+	params := gorequest.NewParamsWith(notMustParams...)
+	params.Set("product_id", productID) // 商品编号
 	// 请求
 	request, err := c.request(ctx, apiUrl+"/api/product/recharge-params", params)
+	if err != nil {
+		return newApiProductRechargeParamsResult(ApiProductRechargeParamsResponse{}, request.ResponseBody, request), err
+	}
 	// 定义
 	var response ApiProductRechargeParamsResponse
-	err = json.Unmarshal(request.ResponseBody, &response)
-	return newApiProductRechargeParamsResult(response, request.ResponseBody, request, err)
+	err = gojson.Unmarshal(request.ResponseBody, &response)
+	return newApiProductRechargeParamsResult(response, request.ResponseBody, request), err
 }
