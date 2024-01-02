@@ -1,8 +1,8 @@
 <h1>
-<a href="https://www.dtapp.net/">Golang KaShangWl</a>
+<a href="https://www.dtapp.net/">Golang</a>
 </h1>
 
-📦 Golang KaShangWl
+📦 Golang 权益销售系统开放平台
 
 [comment]: <> (go)
 [![godoc](https://pkg.go.dev/badge/go.dtapp.net/kashangwl?status.svg)](https://pkg.go.dev/go.dtapp.net/kashangwl)
@@ -13,5 +13,5 @@
 #### 安装
 
 ```go
-go get -v -u go.dtapp.net/kashangwl@v1.0.32
+go get -v -u go.dtapp.net/kashangwl@v1.0.33
 ```

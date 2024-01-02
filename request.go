@@ -10,10 +10,10 @@ func (c *Client) request(ctx context.Context, url string, param gorequest.Params
 
 	// 公共参数
 	param.Set("timestamp", time.Now().UnixNano()/1e6)
-	param.Set("customer_id", c.GetCustomerId())
+	param.Set("customer_id", c.config.customerId)
 
 	// 签名参数
-	param.Set("sign", c.getSign(c.GetCustomerKey(), param))
+	param.Set("sign", c.getSign(c.config.customerKey, param))
 
 	// 创建请求
 	client := gorequest.NewHttp()
@@ -26,6 +26,9 @@ func (c *Client) request(ctx context.Context, url string, param gorequest.Params
 
 	// 设置用户代理
 	client.SetUserAgent(gorequest.GetRandomUserAgentSystem())
+
+	// 传入SDK版本
+	client.SetPassSdkVersion(Version)
 
 	// 设置参数
 	client.SetParams(param)

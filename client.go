@@ -6,9 +6,8 @@ import (
 
 // ClientConfig 实例配置
 type ClientConfig struct {
-	CustomerId     int64  // 商家编号
-	CustomerKey    string // 商家密钥
-	CacheLogStatus bool   // 缓存日志状态
+	CustomerId  int64  // 商家编号
+	CustomerKey string // 商家密钥
 }
 
 // Client 实例
